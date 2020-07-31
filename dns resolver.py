@@ -64,7 +64,7 @@ def main():
     print("\nDNS query ipv6: \n",d6)
     print("************************************************************************")
     count = -1
-    dataframe = pd.DataFrame(columns=["Resolver","UDP reply","Time taken for UDP","HTTPS reply","Time taken for HTTPS"])
+    dataframe = pd.DataFrame(columns=["Resolver","UDP reply","Time taken for UDP","HTTPS reply","Time taken for HTTPS","HTTPS time/UDP time"])
     for r in resolvers:
         
         count+=1
@@ -89,20 +89,19 @@ def main():
                                     "UDP reply":reply_udp,
                                     "Time taken for UDP":time_udp,
                                     "HTTPS reply": reply_https,
-                                    "Time taken for HTTPS":time_https},
+                                    "Time taken for HTTPS":time_https,
+                                    "HTTPS time/UDP time":time_https/time_udp},
                                     ignore_index=True)
         dataframe = dataframe.append({
                                     "Resolver":r+" ipv6",
                                     "UDP reply":reply_udp6,
                                     "Time taken for UDP":time_udp6,
                                     "HTTPS reply": reply_https6,
-                                    "Time taken for HTTPS":time_https6},
+                                    "Time taken for HTTPS":time_https6,
+                                    "HTTPS time/UDP time":time_https6/time_udp6},
                                     ignore_index=True)
-    print()   
-    print(dataframe[['Resolver','Time taken for UDP','Time taken for HTTPS']])
-    print()
-    print("************************************************************************")
-    print()
+   
+
     for index,row in dataframe.iterrows():
         print(row["Resolver"])
         print("\nUDP  : \n")
@@ -110,6 +109,28 @@ def main():
         print("\n HTTPS : \n")
         print(row["HTTPS reply"])
         print("________________________________________________________________________")
+        
+
+    print()   
+    print(dataframe[['Resolver','Time taken for UDP','Time taken for HTTPS']])
+    udp_mean = dataframe['Time taken for UDP'].mean()
+    https_mean = dataframe['Time taken for HTTPS'].mean()
+    udp_max = dataframe['Time taken for UDP'].max()
+    https_max = dataframe['Time taken for HTTPS'].max()
+    udp_min = dataframe['Time taken for UDP'].min()
+    https_min = dataframe['Time taken for HTTPS'].min()
+    print("UDP")
+    print("Average : ",udp_mean)
+    print("Minimum : ",udp_min)
+    print("Maximum : ",udp_max)
+    print("HTTPS")
+    print("Average : ",https_mean)
+    print("Minimum : ",https_min)
+    print("Maximum : ",https_max)
+    print()
+    print("************************************************************************")
+    print()
+  
         
     
         
