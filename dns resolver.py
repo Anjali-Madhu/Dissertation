@@ -57,11 +57,14 @@ def dns_https(dns_query,url):
  
 def main():
     host = str(input("Enter host name :"))
-    #create and display DNS Queries for ipv4 and ipv6
-    d = DNSRecord.question(host,"A")
-    d6 = DNSRecord.question(host,"AAAA")
-    print("DNS query ipv4 : \n",d)
-    print("\nDNS query ipv6: \n",d6)
+    type = int(input("Enter IP type(0 for ipv4,1 for ipv6) : "))
+    #create and display DNS Queries
+    if type == 0:
+        d = DNSRecord.question(host,"A")
+    else:
+        d = DNSRecord.question(host,"AAAA")
+    print("DNS query : \n",d)
+    print()
     print("************************************************************************")
     count = -1
     dataframe = pd.DataFrame(columns=["Resolver","UDP reply","Time taken for UDP","HTTPS reply","Time taken for HTTPS","HTTPS time/UDP time"])
@@ -74,43 +77,38 @@ def main():
         #change the order in which the functions are invokes
         if count % 2==0:
             (reply_udp,time_udp) = dns_udp(d,ip)
-            (reply_udp6,time_udp6) = dns_udp(d6,ip)
             (reply_https,time_https) = dns_https(d,url)
-            (reply_https6,time_https6) = dns_https(d6,url)
+            
             
         else:
             (reply_https,time_https) = dns_https(d,url)
-            (reply_https6,time_https) = dns_https(d6,url)
             (reply_udp,time_udp) = dns_udp(d,ip)
-            (reply_udp6,time_udp6) = dns_udp(d6,ip)
+          
             
         dataframe = dataframe.append({
-                                    "Resolver":r+" ipv4",
+                                    "Resolver":r,
                                     "UDP reply":reply_udp,
                                     "Time taken for UDP":time_udp,
                                     "HTTPS reply": reply_https,
                                     "Time taken for HTTPS":time_https,
                                     "HTTPS time/UDP time":time_https/time_udp},
                                     ignore_index=True)
-        dataframe = dataframe.append({
-                                    "Resolver":r+" ipv6",
-                                    "UDP reply":reply_udp6,
-                                    "Time taken for UDP":time_udp6,
-                                    "HTTPS reply": reply_https6,
-                                    "Time taken for HTTPS":time_https6,
-                                    "HTTPS time/UDP time":time_https6/time_udp6},
-                                    ignore_index=True)
+       
    
 
     for index,row in dataframe.iterrows():
+        if index >0:
+            print("________________________________________________________________________")
+        print()
         print(row["Resolver"])
         print("\nUDP  : \n")
         print(row["UDP reply"])
         print("\n HTTPS : \n")
         print(row["HTTPS reply"])
-        print("________________________________________________________________________")
+        print()
         
-
+    print()    
+    print("************************************************************************")
     print()   
     print(dataframe[['Resolver','Time taken for UDP','Time taken for HTTPS']])
     udp_mean = dataframe['Time taken for UDP'].mean()
@@ -128,12 +126,9 @@ def main():
     print("Minimum : ",https_min)
     print("Maximum : ",https_max)
     print()
-    print("************************************************************************")
-    print()
-  
-        
     
-        
+    
+  
 if __name__ == "__main__":
     main()
             
