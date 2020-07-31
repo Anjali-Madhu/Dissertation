@@ -56,9 +56,10 @@ def dns_https(dns_query,url):
     
  
 def main():
-#create and display DNS Queries for ipv4 and ipv6
-    d = DNSRecord.question("google.com","A")
-    d6 = DNSRecord.question("google.com","AAAA")
+    host = str(input("Enter host name :"))
+    #create and display DNS Queries for ipv4 and ipv6
+    d = DNSRecord.question(host,"A")
+    d6 = DNSRecord.question(host,"AAAA")
     print("DNS query ipv4 : \n",d)
     print("\nDNS query ipv6: \n",d6)
     print("************************************************************************")
